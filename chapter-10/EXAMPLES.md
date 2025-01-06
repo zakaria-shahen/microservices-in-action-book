@@ -1,6 +1,6 @@
 Listing 10.1 A basic Jenkinsfile
 
-```
+```groovy
 stage("Build Info") {
   node {
     def commit = checkout scm
@@ -11,7 +11,7 @@ stage("Build Info") {
 
 Listing 10.3 Jenkinsfile for build step
 
-```
+```groovy
 def withPod(body) {
   podTemplate(label: 'pod', serviceAccount: 'jenkins', containers: [
       containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
@@ -41,7 +41,7 @@ withPod {
 
 Listing 10.4 Test stage
 
-```
+```groovy
 stage('Test') {
   sh("docker run --rm ${service} python setup.py test")
 }
@@ -49,7 +49,7 @@ stage('Test') {
 
 Listing 10.5 Archiving results from test stage
 
-```
+```groovy
 stage('Test') {
   try {
     sh("docker run -v `pwd`:/workspace --rm ${service} python setup.py test")
@@ -61,7 +61,7 @@ stage('Test') {
 
 Listing 10.6 Publishing artifacts
 
-```
+```groovy
 def tagToDeploy = "[your-account]/${service}"
 
 stage('Publish') {
@@ -74,7 +74,7 @@ stage('Publish') {
 
 Listing 10.7 Deployment specification for market-data
 
-```
+```yml
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -119,7 +119,7 @@ spec:
 
 Listing 10.8 Market data service definition
 
-```
+```yml
 ---
 apiVersion: v1
 kind: Service
@@ -138,7 +138,7 @@ spec:
 
 Listing 10.9 Deployment to staging
 
-```
+```groovy
 stage('Deploy') {
   sh("sed -i.bak 's#BUILD_TAG#${tagToDeploy}#' ./deploy/staging/*.yml")
 
@@ -156,7 +156,7 @@ kubectl rollout status –n staging deployment/market-data
 
 Listing 10.12 Approving a production release
 
-```
+```groovy
 stage('Approve release?') {
   input message: "Release ${tagToDeploy} to production?"
 }
@@ -164,7 +164,7 @@ stage('Approve release?') {
 
 Listing 10.13 Production release stage
 
-```
+```groovy
 stage('Deploy to production') {
 
   sh("sed -i.bak 's#BUILD_TAG#${tagToDeploy}#' ./deploy/production/*.yml")
@@ -177,7 +177,7 @@ stage('Deploy to production') {
 
 Listing 10.14 deploy.groovy
 
-```
+```groovy
 def toKubernetes(tagToDeploy, namespace, deploymentName) {
   sh("sed -i.bak 's#BUILD_TAG#${tagToDeploy}#' ./deploy/${namespace}/*.yml")
 
@@ -199,7 +199,7 @@ return this;
 
 Listing 10.15 Using deploy.groovy in your Jenkinsfile
 
-```
+```groovy
 def deploy = load('deploy.groovy')
 
 stage('Deploy to staging') {
@@ -217,7 +217,7 @@ stage('Deploy to production') {
 
 Listing 10.16 Canary release stage
 
-```
+```groovy
 stage('Deploy canary') {
   deploy.toKubernetes(tagToDeploy, 'canary', 'market-data-canary')
 
@@ -231,7 +231,7 @@ stage('Deploy canary') {
 
 Listing 10.17 Example declarative build pipeline
 
-```
+```groovy
 service {
   name('market-data')
 

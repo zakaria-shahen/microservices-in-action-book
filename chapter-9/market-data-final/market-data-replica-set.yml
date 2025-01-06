@@ -1,9 +1,13 @@
 ---
 kind: ReplicaSet
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
   name: market-data
 spec:
+  selector:
+    matchLabels:
+      app: market-data
+      tier: backend
   replicas: 3
   template:
     metadata:
@@ -14,22 +18,23 @@ spec:
     spec:
       containers:
       - name: market-data
-        image: morganjbruce/market-data:latest
+        image: hashicorp/http-echo
+        args: ["-text='hello world'"]
         resources:
           requests:
             cpu: 100m
             memory: 100Mi
         ports:
-        - containerPort: 8000
+        - containerPort: 5678
         livenessProbe:
           httpGet:
-            path: /ping
-            port: 8000
+            path: /
+            port: 5678
           initialDelaySeconds: 10
           timeoutSeconds: 15
         readinessProbe:
           httpGet:
-            path: /ping
-            port: 8000
+            path: /
+            port: 5678
           initialDelaySeconds: 10
           timeoutSeconds: 15

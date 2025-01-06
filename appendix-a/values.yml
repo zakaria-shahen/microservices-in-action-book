@@ -8,11 +8,11 @@ Master:
     - "staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods leftShift java.util.Map java.util.Map"
     - "staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods split java.lang.String"
   InstallPlugins:
-    - kubernetes:1.6.4
-    - workflow-aggregator:2.5
-    - workflow-job:2.21
+    - kubernetes:4306.vc91e951ea_eb_d
+    - workflow-aggregator:600.vb_57cdd26fdd7
+    - workflow-job:687.v619cb_15e923f
     - credentials-binding:1.16
-    - git:3.9.1
+    - git:5.6.1
 Agent:
   volumes:
     - type: HostPath
@@ -24,9 +24,9 @@ Persistence:
   StorageClass: jenkins-volume
   Size: 10Gi
 
-NetworkPolicy:
+networkPolicy:
   Enabled: false
-  ApiVersion: extensions/v1beta1
+  apiVersion: apps/v1
 
 rbac:
-  install: true
+  create: true # however it's enable by default 

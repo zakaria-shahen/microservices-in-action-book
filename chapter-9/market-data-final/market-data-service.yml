@@ -10,5 +10,5 @@ spec:
     tier: backend
   ports:
     - protocol: TCP
-      port: 8000
+      port: 5678
       nodePort: 30623
