@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-data
+spec:
+  selector:
+    matchLabels:
+      app: market-data
+      tier: backend
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
+  template:
+    metadata:
+      labels:
+        app: market-data
+        tier: backend
+        track: stable
+    spec:
+      containers:
+      - name: market-data
+        image: BUILD_TAG 
+        resources:
+          limits:
+            cpu: 100m 
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8000
+          initialDelaySeconds: 10
+          timeoutSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8000
+          initialDelaySeconds: 10
+          timeoutSeconds: 15
